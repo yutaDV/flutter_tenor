@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '/services/connection.dart';
+import 'search_screen.dart'; // Імпорт файлу для наступного екрану
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -63,8 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             ElevatedButton(
               onPressed: () {
-                // Дія при натисканні на кнопку "Start"
-                // TODO: Додати код для обробки натискання кнопки "Start"
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => SearchScreen()),
+                );
               },
               child: Text('Start'),
             ),
