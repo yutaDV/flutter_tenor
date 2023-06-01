@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import '/widgets/image_widget.dart';
-import '/services/tenor_api.dart';
+import 'package:flutter_typeahead/flutter_typeahead.dart';
+
+import '../widgets/image_widget.dart';
+import '../services/tenor_api.dart';
+import '../widgets/bottom_navigation_buttons.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -10,6 +13,7 @@ class SearchScreen extends StatefulWidget {
 class _SearchScreenState extends State<SearchScreen> {
   String _searchText = '';
   List<String> _imageUrls = [];
+  List<String> _searchSuggestions = [];
 
   void _searchImages() async {
     List<String> imageUrls = await TenorAPI.searchImages(_searchText);
@@ -19,36 +23,87 @@ class _SearchScreenState extends State<SearchScreen> {
     });
   }
 
+  void _getSearchSuggestions(String searchText) async {
+    List<String> suggestions = await TenorAPI.searchSuggestions(searchText);
+
+    setState(() {
+      _searchSuggestions = suggestions;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Search'),
       ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              onChanged: (value) {
-                setState(() {
-                  _searchText = value;
-                });
-              },
-              decoration: InputDecoration(
-                labelText: 'Search',
-                hintText: 'Введіть текст тут',
-                suffixIcon: IconButton(
-                  icon: Icon(Icons.search),
-                  onPressed: () {
-                    _searchImages();
-                  },
-                ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  TypeAheadFormField(
+                    textFieldConfiguration: TextFieldConfiguration(
+                      onChanged: (value) {
+                        setState(() {
+                          _searchText = value;
+                          _getSearchSuggestions(value);
+                        });
+                      },
+                      decoration: InputDecoration(
+                        labelText: 'Search',
+                        hintText: 'Enter text here',
+                        suffixIcon: IconButton(
+                          icon: Icon(Icons.search),
+                          onPressed: () {
+                            _searchImages();
+                          },
+                        ),
+                      ),
+                    ),
+                    suggestionsCallback: (pattern) async {
+                      return await TenorAPI.searchSuggestions(pattern);
+                    },
+                    itemBuilder: (context, suggestion) {
+                      return ListTile(
+                        title: Text(suggestion),
+                      );
+                    },
+                    onSuggestionSelected: (suggestion) {
+                      setState(() {
+                        _searchText = suggestion;
+                        _searchSuggestions.clear();
+                      });
+                      _searchImages();
+                    },
+                  ),
+                  if (_searchSuggestions.isNotEmpty)
+                    Container(
+                      height: 150,
+                      child: ListView.builder(
+                        itemCount: _searchSuggestions.length,
+                        itemBuilder: (context, index) {
+                          return ListTile(
+                            title: Text(_searchSuggestions[index]),
+                            onTap: () {
+                              setState(() {
+                                _searchText = _searchSuggestions[index];
+                                _searchSuggestions.clear();
+                              });
+                              _searchImages();
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                ],
               ),
             ),
-          ),
-          Expanded(
-            child: GridView.builder(
+            GridView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
               padding: EdgeInsets.all(8.0),
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 2,
@@ -59,40 +114,20 @@ class _SearchScreenState extends State<SearchScreen> {
               itemBuilder: (context, index) {
                 return ImageWidget(imageUrl: _imageUrls[index]);
               },
-              shrinkWrap: true,
             ),
-          ),
-          Container(
-            height: 60.0,
-            color: Colors.grey[200],
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                IconButton(
-                  icon: Icon(Icons.home),
-                  onPressed: () {
-                    // Виконати дії при натисканні на кнопку "Головна"
-                    // TODO: Додати код для обробки події натискання
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.favorite),
-                  onPressed: () {
-                    // Виконати дії при натисканні на кнопку "Улюблене"
-                    // TODO: Додати код для обробки події натискання
-                  },
-                ),
-                IconButton(
-                  icon: Icon(Icons.settings),
-                  onPressed: () {
-                    // Виконати дії при натисканні на кнопку "Налаштування"
-                    // TODO: Додати код для обробки події натискання
-                  },
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
+      ),
+      bottomNavigationBar: BottomNavigationButtons(
+        onHomePressed: () {
+          // TODO: Handle home button pressed event
+        },
+        onFavoritePressed: () {
+          // TODO: Handle favorite button pressed event
+        },
+        onSettingsPressed: () {
+          // TODO: Handle settings button pressed event
+        },
       ),
     );
   }
