@@ -4,6 +4,7 @@ import 'package:flutter_typeahead/flutter_typeahead.dart';
 import '../widgets/image_widget.dart';
 import '../services/tenor_api.dart';
 import '../widgets/bottom_navigation_buttons.dart';
+import 'favorite_screen.dart';
 
 class SearchScreen extends StatefulWidget {
   @override
@@ -123,7 +124,10 @@ class _SearchScreenState extends State<SearchScreen> {
           // TODO: Handle home button pressed event
         },
         onFavoritePressed: () {
-          // TODO: Handle favorite button pressed event
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => FavoriteScreen()),
+          );
         },
         onSettingsPressed: () {
           // TODO: Handle settings button pressed event
