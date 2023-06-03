@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import '/services/connection.dart';
-import 'search_screen.dart'; // Імпорт файлу для наступного екрану
+import '/screens/search_screen.dart';
+import '/services/lottie_animation.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -47,45 +48,51 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text(
-              'Welcome вказати назву додатку та картинку вгорі!',
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(48),
+            alignment: Alignment.center,
+            child: Text(
+              'Welcome to Gif search!',
               style: TextStyle(fontSize: 24),
             ),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => SearchScreen()),
-                );
-              },
-              child: Text('Start'),
+          ),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SearchScreen()),
+                      );
+                    },
+                    child: Text('Start'),
+                  ),
+                  SizedBox(height: 20),
+                  LottieAnimation(), // Віджет з анімацією Lottie
+                ],
+              ),
             ),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () {
-                // Дія при натисканні на кнопку вибору мови
-                // TODO: Додати код для вибору мови
-              },
-              child: Text('Choose Language'),
-            ),
-            SizedBox(height: 20),
-            Text(
+          ),
+          Container(
+            padding: EdgeInsets.all(16),
+            alignment: Alignment.center,
+            child: Text(
               'Connection Status: $_connectionMessage',
               style: TextStyle(fontSize: 18, color: _connectionColor),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

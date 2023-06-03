@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/sql_bd.dart';
 import '../widgets/image_widget.dart';
+import '../widgets/bottom_navigation_buttons.dart';
+import 'home_screen.dart';
+import 'search_screen.dart';
 
 class FavoriteScreen extends StatefulWidget {
   @override
@@ -41,8 +44,22 @@ class _FavoriteScreenState extends State<FavoriteScreen> {
         itemBuilder: (context, index) {
           return ImageWidget(
             imageUrl: _imageUrls[index],
-            isFavoriteScreen: true, // Додано параметр isFavoriteScreen зі значенням true
+            isFavoriteScreen: true,
           );
+        },
+      ),
+      bottomNavigationBar: BottomNavigationButtons(
+        onHomePressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+          );
+        },
+        onFavoritePressed: () {
+          // TODO: Handle favorite button pressed event
+        },
+        onSettingsPressed: () {
+          // TODO: Handle Settings button pressed event
         },
       ),
     );
