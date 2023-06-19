@@ -37,6 +37,7 @@ dependencies:
   share_plus: ^4.0.2
   sqflite: ^2.2.8+4
   lottie: ^2.4.0
+  dio: ^5.2.1+1
 
 
   # cupertino_icons: ^1.0.2
